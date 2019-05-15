@@ -7,9 +7,7 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by LaunchCode
@@ -42,7 +40,8 @@ public class JobData {
                 values.add(aValue);
             }
         }
-
+        // sort the array narrowed down by field
+        Collections.sort(values);
         return values;
     }
 
@@ -51,7 +50,7 @@ public class JobData {
         // load data, if not already loaded
         loadData();
 
-        return allJobs;
+        return new ArrayList<>(allJobs);
     }
 
     /**
@@ -76,11 +75,34 @@ public class JobData {
 
             String aValue = row.get(column);
 
-            if (aValue.contains(value)) {
+            if (aValue.toLowerCase().contains(value.toLowerCase())) {
                 jobs.add(row);
             }
         }
 
+        return jobs;
+    }
+
+    /**
+     * Returns results of search the job data by value in all the fields.
+     * @param aValue search term to be searched in all the fields
+     * @return List of all jobs matching criteria
+     */
+    public static ArrayList<HashMap<String, String>> findByValue(String aValue)
+    {
+        //load data if not already
+        loadData();
+
+        ArrayList<HashMap<String, String>> jobs = new ArrayList<>();
+
+        for (HashMap<String, String> row : allJobs){        // get each row
+            Collection<String> values = row.values();       //get all the values from the row in a string collection obj
+            for (String value : values)
+            {
+                if(value.toLowerCase().contains(aValue.toLowerCase()))
+                    jobs.add(row);
+            }
+        }
         return jobs;
     }
 
